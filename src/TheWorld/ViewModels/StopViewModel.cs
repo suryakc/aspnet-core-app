@@ -5,31 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheWorld.Models
+namespace TheWorld.ViewModels
     {
-    public class Trip
+    public class StopViewModel
         {
-        public int Id
-            {
-            get; set;
-            }
-
+        [Required]
         public string Name
             {
             get; set;
             }
 
-        public DateTime DateCreated
+        public double Latitude
             {
             get; set;
             }
 
-        public string UserName
+        public double Longitude
             {
             get; set;
             }
 
-        public ICollection<Stop> Stops
+        [Required]
+        public int Order
+            {
+            get; set;
+            }
+
+        [Required]
+        public DateTime Arrival
             {
             get; set;
             }

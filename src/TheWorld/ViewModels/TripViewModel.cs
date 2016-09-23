@@ -5,33 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TheWorld.Models
+namespace TheWorld.ViewModels
     {
-    public class Trip
+    public class TripViewModel
         {
-        public int Id
-            {
-            get; set;
-            }
-
+        [Required]
         public string Name
             {
             get; set;
             }
 
+        [Required]
         public DateTime DateCreated
             {
             get; set;
-            }
-
-        public string UserName
-            {
-            get; set;
-            }
-
-        public ICollection<Stop> Stops
-            {
-            get; set;
-            }
+            } = DateTime.UtcNow;
         }
     }
