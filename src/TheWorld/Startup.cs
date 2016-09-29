@@ -13,6 +13,8 @@ using TheWorld.Models;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
 using TheWorld.ViewModels;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TheWorld
     {
@@ -50,15 +52,31 @@ namespace TheWorld
 
             services.AddScoped<IWorldRepository, WorldRepository> ();
 
+            services.AddTransient<GeoCoordsService> ();
+
             services.AddTransient<WorldContextSeedData> ();
 
             services.AddLogging ();
 
-            services.AddMvc ()
+            services.AddMvc (config =>
+                {
+                    if (m_env.IsProduction ())
+                        {
+                        config.Filters.Add (new RequireHttpsAttribute ());
+                        }                        
+                })
                 .AddJsonOptions (config =>
                 {
                     config.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver ();
                 });
+
+            services.AddIdentity<WorldUser, IdentityRole> (config =>
+                {
+                    config.User.RequireUniqueEmail = true;
+                    config.Password.RequiredLength = 8;
+                    config.Cookies.ApplicationCookie.LoginPath = "/Auth/Login";
+                })
+                .AddEntityFrameworkStores<WorldContext> ();
             }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,13 +94,7 @@ namespace TheWorld
             //{
             //    await context.Response.WriteAsync("Hello World!");
             //});
-            #endregion default code
-
-            Mapper.Initialize (config =>
-            {
-                config.CreateMap<TripViewModel, Trip> ().ReverseMap ();
-                config.CreateMap<StopViewModel, Stop> ().ReverseMap ();
-            });
+            #endregion default code            
 
             if (!env.IsProduction ())
                 {
@@ -97,6 +109,14 @@ namespace TheWorld
             //app.UseDefaultFiles();
 
             app.UseStaticFiles ();
+
+            app.UseIdentity ();
+
+            Mapper.Initialize (config =>
+            {
+                config.CreateMap<TripViewModel, Trip> ().ReverseMap ();
+                config.CreateMap<StopViewModel, Stop> ().ReverseMap ();
+            });
 
             app.UseMvc (config =>
              {

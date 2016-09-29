@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,21 +10,34 @@ namespace TheWorld.Models
     public class WorldContextSeedData
         {
         private WorldContext m_context;
+        private UserManager<WorldUser> m_userManager;
 
-        public WorldContextSeedData (WorldContext context)
+        public WorldContextSeedData (WorldContext context, UserManager<WorldUser> userManager)
             {
             m_context = context;
+            m_userManager = userManager;
             }
 
         public async Task EnsureSeedData ()
             {
+            if (await m_userManager.FindByEmailAsync ("surya@surya.com") == null)
+                {
+                var user = new WorldUser ()
+                    {
+                    UserName = "surya",
+                    Email = "surya@surya.com"
+                    };
+
+                await m_userManager.CreateAsync (user, "P@ssw0rd!");
+                }
+
             if (!m_context.Trips.Any ())
                 {
                 var usTrip = new Trip ()
                     {
                     DateCreated = DateTime.UtcNow,
                     Name = "US Trip",
-                    UserName = "",
+                    UserName = "surya",
                     Stops = new List<Stop> ()
                         {
                         new Stop() {  Name = "Atlanta, GA", Arrival = new DateTime(2014, 6, 4), Latitude = 33.748995, Longitude = -84.387982, Order = 0 },
@@ -42,7 +56,7 @@ namespace TheWorld.Models
                     {
                     DateCreated = DateTime.UtcNow,
                     Name = "World Trip",
-                    UserName = "",
+                    UserName = "surya",
                     Stops = new List<Stop> ()
                         {
                         new Stop() { Order = 0, Latitude =  33.748995, Longitude =  -84.387982, Name = "Atlanta, Georgia", Arrival = DateTime.Parse("Jun 3, 2014") },

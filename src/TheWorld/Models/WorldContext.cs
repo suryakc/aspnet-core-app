@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace TheWorld.Models
     {
-    public class WorldContext : DbContext
+    public class WorldContext : IdentityDbContext<WorldUser>
         {
         private IConfigurationRoot m_config;
 
@@ -30,7 +31,6 @@ namespace TheWorld.Models
         protected override void OnConfiguring (DbContextOptionsBuilder optionsBuilder)
             {
             base.OnConfiguring (optionsBuilder);
-
             optionsBuilder.UseSqlServer (m_config["ConnectionStrings:WorldContextConnection"]);
             }
         }
